@@ -18,46 +18,16 @@ jobs:
         with:
           channel: "stable"
 
-      - name: Debug repo tree
-        run: |
-          echo "=== ROOT ==="
-          ls -la
-          echo "=== main.dart files ==="
-          find . -maxdepth 10 -path "*/lib/main.dart" -print
-          echo "=== pubspec files ==="
-          find . -maxdepth 10 -name pubspec.yaml -print
-
-      - name: Find Flutter app folder (by lib/main.dart)
-        id: find
-        run: |
-          set -e
-          MAIN=$(find . -maxdepth 10 -path "*/lib/main.dart" | head -n 1)
-
-          if [ -z "$MAIN" ]; then
-            echo "Erro: não encontrei nenhum lib/main.dart"
-            exit 1
-          fi
-
-          APP_DIR=$(dirname "$(dirname "$MAIN")") # sobe de /lib/main.dart para pasta do app
-          echo "Found app dir: $APP_DIR"
-
-          if [ ! -f "$APP_DIR/pubspec.yaml" ]; then
-            echo "Erro: encontrei lib/main.dart, mas não existe pubspec.yaml em $APP_DIR"
-            exit 1
-          fi
-
-          echo "flutter_dir=$APP_DIR" >> $GITHUB_OUTPUT
-
       - name: Flutter pub get
-        working-directory: ${{ steps.find.outputs.flutter_dir }}
+        working-directory: librasclass_ai_starter/app_flutter
         run: flutter pub get
 
       - name: Build release APK
-        working-directory: ${{ steps.find.outputs.flutter_dir }}
+        working-directory: librasclass_ai_starter/app_flutter
         run: flutter build apk --release
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release-apk
-          path: ${{ steps.find.outputs.flutter_dir }}/build/app/outputs/flutter-apk/app-release.apk
+          path: librasclass_ai_starter/app_flutter/build/app/outputs/flutter-apk/app-release.apk
