@@ -22,38 +22,21 @@ jobs:
         run: |
           echo "=== ROOT ==="
           ls -la
-          echo "=== pubspecs ==="
-          find . -maxdepth 8 -name pubspec.yaml -print
+          echo "=== app_flutter dirs ==="
+          find . -maxdepth 10 -type d -name "app_flutter" -print
+          echo "=== pubspecs inside app_flutter ==="
+          find . -maxdepth 10 -path "*/app_flutter/pubspec.yaml" -print
 
-      - name: Find correct Flutter app folder
+      - name: Find correct Flutter app folder (app_flutter)
         id: find
         run: |
           set -e
-          APP_DIR=$(find . -maxdepth 8 -name pubspec.yaml -exec grep -l "name: librasclass_ai" {} \; | head -n 1 | xargs dirname)
-          echo "Found app dir: $APP_DIR"
+          PUBSPEC=$(find . -maxdepth 10 -path "*/app_flutter/pubspec.yaml" | head -n 1)
 
-          if [ -z "$APP_DIR" ]; then
-            echo "Erro: não encontrei pubspec.yaml do app librasclass_ai"
+          if [ -z "$PUBSPEC" ]; then
+            echo "Erro: não encontrei */app_flutter/pubspec.yaml"
             exit 1
           fi
 
-          if [ ! -f "$APP_DIR/lib/main.dart" ]; then
-            echo "Erro: pasta encontrada não contém lib/main.dart -> $APP_DIR"
-            exit 1
-          fi
-
-          echo "flutter_dir=$APP_DIR" >> $GITHUB_OUTPUT
-
-      - name: Flutter pub get
-        working-directory: ${{ steps.find.outputs.flutter_dir }}
-        run: flutter pub get
-
-      - name: Build release APK
-        working-directory: ${{ steps.find.outputs.flutter_dir }}
-        run: flutter build apk --release
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release-apk
-          path: ${{ steps.find.outputs.flutter_dir }}/build/app/outputs/flutter-apk/app-release.apk
+          APP_DIR=$(dirname "$PUBSPEC")
+          echo "Found app
