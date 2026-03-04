@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "word_pt": "bom dia",
+    "gloss": "BOM DIA",
+    "animation": "rotina_bom_dia",
+    "category": "rotina"
+  },
+  {
+    "id": 2,
+    "word_pt": "abrir",
+    "gloss": "ABRIR",
+    "animation": "rotina_abrir",
+    "category": "rotina"
+  },
+  {
+    "id": 3,
+    "word_pt": "caderno",
+    "gloss": "CADERNO",
+    "animation": "rotina_caderno",
+    "category": "rotina"
+  },
+  {
+    "id": 4,
+    "word_pt": "hoje",
+    "gloss": "HOJE",
+    "animation": "rotina_hoje",
+    "category": "rotina"
+  },
+  {
+    "id": 5,
+    "word_pt": "estudar",
+    "gloss": "ESTUDAR",
+    "animation": "rotina_estudar",
+    "category": "rotina"
+  },
+  {
+    "id": 6,
+    "word_pt": "fração",
+    "gloss": "FRACAO",
+    "animation": "matematica_fracao",
+    "category": "matematica"
+  },
+  {
+    "id": 7,
+    "word_pt": "atenção",
+    "gloss": "ATENCAO",
+    "animation": "rotina_atencao",
+    "category": "rotina"
+  },
+  {
+    "id": 8,
+    "word_pt": "copiar",
+    "gloss": "COPIAR",
+    "animation": "rotina_copiar",
+    "category": "rotina"
+  },
+  {
+    "id": 9,
+    "word_pt": "exercício",
+    "gloss": "EXERCICIO",
+    "animation": "rotina_exercicio",
+    "category": "rotina"
+  }
+]

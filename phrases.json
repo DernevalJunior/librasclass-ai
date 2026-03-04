@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "phrase": "Bom dia, turma",
+    "category": "rotina"
+  },
+  {
+    "id": 2,
+    "phrase": "Abram o caderno",
+    "category": "rotina"
+  },
+  {
+    "id": 3,
+    "phrase": "Hoje vamos estudar frações",
+    "category": "matematica"
+  },
+  {
+    "id": 4,
+    "phrase": "Prestem atenção",
+    "category": "rotina"
+  },
+  {
+    "id": 5,
+    "phrase": "Copiem o exercício",
+    "category": "rotina"
+  }
+]
