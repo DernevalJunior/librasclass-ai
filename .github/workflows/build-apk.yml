@@ -18,21 +18,31 @@ jobs:
         with:
           channel: "stable"
 
-      - name: List repo folders (debug)
+      - name: Debug repo tree
         run: |
           echo "=== ROOT ==="
           ls -la
-          echo "=== FIND app_flutter ==="
-          find . -maxdepth 5 -type d -name "app_flutter" -print
+          echo "=== pubspecs ==="
+          find . -maxdepth 8 -name pubspec.yaml -print
 
-      - name: Find Flutter project folder (pubspec.yaml)
+      - name: Find correct Flutter app folder
         id: find
         run: |
           set -e
-          FILE=$(find . -maxdepth 6 -name pubspec.yaml -print | head -n 1)
-          echo "Found pubspec: $FILE"
-          DIR=$(dirname "$FILE")
-          echo "flutter_dir=$DIR" >> $GITHUB_OUTPUT
+          APP_DIR=$(find . -maxdepth 8 -name pubspec.yaml -exec grep -l "name: librasclass_ai" {} \; | head -n 1 | xargs dirname)
+          echo "Found app dir: $APP_DIR"
+
+          if [ -z "$APP_DIR" ]; then
+            echo "Erro: não encontrei pubspec.yaml do app librasclass_ai"
+            exit 1
+          fi
+
+          if [ ! -f "$APP_DIR/lib/main.dart" ]; then
+            echo "Erro: pasta encontrada não contém lib/main.dart -> $APP_DIR"
+            exit 1
+          fi
+
+          echo "flutter_dir=$APP_DIR" >> $GITHUB_OUTPUT
 
       - name: Flutter pub get
         working-directory: ${{ steps.find.outputs.flutter_dir }}
