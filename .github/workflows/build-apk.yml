@@ -9,6 +9,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Unzip project (ZIP enviado no repositório)
+        run: |
+          set -e
+          echo "=== ROOT ==="
+          ls -la
+
+          ZIP_FILE=$(find . -maxdepth 3 -name "*.zip" | head -n 1)
+
+          if [ -z "$ZIP_FILE" ]; then
+            echo "Erro: nenhum arquivo .zip encontrado no repositório"
+            exit 1
+          fi
+
+          echo "ZIP encontrado: $ZIP_FILE"
+          unzip -o "$ZIP_FILE" -d extracted_project
+
+          echo "=== Arquivos extraídos (amostra) ==="
+          find extracted_project -maxdepth 8 -type f | head -n 100
+
       - uses: actions/setup-java@v4
         with:
           distribution: "temurin"
@@ -18,16 +37,37 @@ jobs:
         with:
           channel: "stable"
 
+      - name: Find Flutter app folder (lib/main.dart)
+        id: find
+        run: |
+          set -e
+          MAIN=$(find extracted_project -maxdepth 12 -path "*/lib/main.dart" | head -n 1)
+
+          if [ -z "$MAIN" ]; then
+            echo "Erro: não encontrei lib/main.dart dentro do zip extraído"
+            exit 1
+          fi
+
+          APP_DIR=$(dirname "$(dirname "$MAIN")")
+          echo "App dir encontrado: $APP_DIR"
+
+          if [ ! -f "$APP_DIR/pubspec.yaml" ]; then
+            echo "Erro: pubspec.yaml não encontrado em $APP_DIR"
+            exit 1
+          fi
+
+          echo "flutter_dir=$APP_DIR" >> $GITHUB_OUTPUT
+
       - name: Flutter pub get
-        working-directory: librasclass_ai_starter/app_flutter
+        working-directory: ${{ steps.find.outputs.flutter_dir }}
         run: flutter pub get
 
       - name: Build release APK
-        working-directory: librasclass_ai_starter/app_flutter
+        working-directory: ${{ steps.find.outputs.flutter_dir }}
         run: flutter build apk --release
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release-apk
-          path: librasclass_ai_starter/app_flutter/build/app/outputs/flutter-apk/app-release.apk
+          path: ${{ steps.find.outputs.flutter_dir }}/build/app/outputs/flutter-apk/app-release.apk
